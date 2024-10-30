@@ -1,5 +1,6 @@
 package org.javacours.services;
 
+import lombok.Setter;
 import org.javacours.data.BookRepo;
 import org.javacours.exceptions.BookAlreadyLoanedException;
 import org.javacours.exceptions.BookNotFoundException;
@@ -10,20 +11,18 @@ import org.javacours.models.User;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.Objects;
 import java.util.Scanner;
 
 public class BookService {
 
-    private final ArrayList<BookLoan> bookLoans;
-    private final int MAX_LOANED_BOOKS_PER_USER = 3;
     private static BookService bookService;
-    private final BookRepo bookRepo;
+    @Setter
+    private BookRepo bookRepo;
 
     private BookService() throws IOException {
         bookRepo = BookRepo.getBookRepo();
-        bookLoans = bookRepo.getBookLoans();
     }
     public static BookService getInstance() throws IOException {
         if(bookService == null) {
@@ -32,17 +31,19 @@ public class BookService {
         return bookService;
     }
 
-
     private void checkAllConditionsForUserLoan(Book book, User user) {
         int nbOfBooks = 0;
-        for (BookLoan bookLoan : bookLoans) {
+        for (BookLoan bookLoan : bookRepo.getBookLoans()) {
             if (Objects.equals(bookLoan.getUser(), user) && bookLoan.getReturnDate() == null) {
                 nbOfBooks ++;
+                int MAX_LOANED_BOOKS_PER_USER = 3;
                 if (nbOfBooks >= MAX_LOANED_BOOKS_PER_USER) {
                     throw new TooManyLoanedBooksException("Vous ne pouvez pas emprunter plus de trois livres simultanément");
                 }
             }
-            if (Objects.equals(bookLoan.getBook().getTitle(), book.getTitle()) && Objects.equals(bookLoan.getBook().getAuthorName(), book.getAuthorName()) && Objects.equals(bookLoan.getBook().getDescription(), book.getDescription())) {
+            if (Objects.equals(bookLoan.getBook().getTitle(), book.getTitle())
+                    && Objects.equals(bookLoan.getBook().getAuthorName(), book.getAuthorName())
+                    && Objects.equals(bookLoan.getBook().getDescription(), book.getDescription())) {
                 throw new BookAlreadyLoanedException("Vous ne pouvez pas emprunter plusieurs fois le même livre");
             }
         }
@@ -53,6 +54,7 @@ public class BookService {
         try {
             book = bookRepo.getBookByIsbn(isbn);
         }catch (BookNotFoundException e) {
+            System.out.println(e.getMessage());
             throw e;
         }
 

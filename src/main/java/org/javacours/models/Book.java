@@ -1,12 +1,11 @@
 package org.javacours.models;
 
-import lombok.Builder;
-import lombok.Getter;
-
-import java.util.UUID;
+import lombok.*;
 
 @Getter
 @Builder
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class Book {
     private String isbn;
     private String title;

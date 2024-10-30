@@ -1,5 +1,6 @@
 package org.javacours.services;
 
+import lombok.Setter;
 import org.javacours.data.DataLoader;
 import org.javacours.exceptions.UserNotFoundException;
 import org.javacours.models.User;
@@ -14,6 +15,7 @@ import java.util.Scanner;
 
 public class UserService {
     private static UserService userService;
+    @Setter
     private DataLoader dataLoader;
     private UserService() throws IOException {
         this.dataLoader = DataLoader.getInstance();
@@ -26,7 +28,7 @@ public class UserService {
         return userService;
     }
 
-    private String hashPassword(String password) {
+    public String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] hashBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));

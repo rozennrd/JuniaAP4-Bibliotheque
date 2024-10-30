@@ -10,7 +10,7 @@ import java.util.Objects;
 
 
 public class BookRepo {
-    private final DataLoader dataLoader;
+    private DataLoader dataLoader;
     private static BookRepo bookRepo;
 
     private BookRepo() throws IOException {
@@ -50,5 +50,10 @@ public class BookRepo {
 
     public void saveAllBooksToFile(String file) throws IOException {
         dataLoader.saveAllBooksToFile(file);
+    }
+
+    // Testing method to set a mock DataLoader (package-private)
+    void setDataLoader(DataLoader dataLoader) {
+        this.dataLoader = dataLoader;
     }
 }
